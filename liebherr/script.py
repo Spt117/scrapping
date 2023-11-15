@@ -11,7 +11,7 @@ import csv
 filename = 'produits.csv'
 
 # En-têtes des colonnes
-headers = ['Nom','Arborescence', 'Prix', 'Description', 'Couleurs disponibles', 'Volume', 'Dimensions', 'Caractéristiques techniques']
+headers = ['Nom','Arborescence', 'Couleurs disponibles','Prix', 'Description',  'Volume', 'Dimensions', 'Caractéristiques techniques']
 
 # Créer le fichier CSV avec les en-têtes
 with open(filename, mode='w', newline='', encoding='utf-8') as file:

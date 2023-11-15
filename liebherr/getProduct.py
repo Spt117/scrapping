@@ -55,15 +55,18 @@ def getInfos(url):
                 if 'Volume total' in dl.get_text():
                     dd_element = dl.find('dd').get_text().strip()
                 else:
-                    dd_element = 'None'    
+                    dd_element = 'None'   
+            else:
+                    dd_element = 'None'  
+            print(dd_element)
 
     # Dimensions
     elements_with_dimensions = soup.find_all(text=lambda text: 'Dimensions' in text)
     # Extraire et afficher les dimensions du premier élément correspondant
     if len(elements_with_dimensions) > 0:
-        print(elements_with_dimensions[0])
+        dimentions = elements_with_dimensions[0].split(':')[1].strip()
     else:
-        print('None')
+        dimentions = 'None'
 
     # Caractéristiques techniques
 
@@ -73,7 +76,7 @@ def getInfos(url):
 
         # Ajouter le nom du produit dans la colonne "Nom"
         # Assurez-vous que le nombre de colonnes dans writer.writerow() correspond au nombre de colonnes dans le fichier CSV
-        writer.writerow([product_title_text, arborescence_text, result_text, product_price, description_text, dd_element, elements_with_dimensions[0], '']) 
+        writer.writerow([product_title_text, arborescence_text, result_text, product_price, description_text, dd_element, dimentions, '']) 
 
 
 
@@ -86,5 +89,4 @@ def checkRedirection(url):
         print("Redirigé vers:", response.url)
         return False
     else:
-        print("Pas de redirection, URL actuelle:", response.url)
         return True
