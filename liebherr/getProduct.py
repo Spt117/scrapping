@@ -1,7 +1,9 @@
 import requests
 from bs4 import BeautifulSoup
 import csv
-import re
+from getImages import getImages
+from getDocuments import getDocuments
+
 
 parent_folder = 'images'
 filename = 'produits.csv'
@@ -18,10 +20,16 @@ def getInfos(url):
     product_title = soup.find('h1')
     product_title_text = ' '.join(product_title.get_text().strip().split())
 
+    #PDF
+    getDocuments(url, product_title_text)
+
+    #Images
+    getImages(url, product_title_text)
+
     #Arborescence
     arborescence = soup.find('div', class_='uk-first-column')
     arborescence_lis = arborescence.find_all('li') if arborescence else []
-    arborescence_text = '|'.join(li.get_text().strip() for li in arborescence_lis)
+    arborescence_text = '/'.join(li.get_text().strip() for li in arborescence_lis)
 
     # Prix
     product_price = soup.find('span', class_='amount').get_text().strip().replace(',', '').replace('-', '')
@@ -50,15 +58,19 @@ def getInfos(url):
         # Créer un tableau avec tous les éléments 'dl' dans cet 'ul'
         dl_elements = ul_element.find_all('dl')
         # Trouver le 'dl' qui contient le texte 'Volume total'
-        for dl in dl_elements:
-            if 'Volume total' in dl.get_text():
-                if 'Volume total' in dl.get_text():
-                    dd_element = dl.find('dd').get_text().strip()
-                else:
-                    dd_element = 'None'   
-            else:
-                    dd_element = 'None'  
-            print(dd_element)
+
+    volume_total_trouve = False
+
+    for dl in dl_elements:
+        if 'Volume total' in dl.get_text() or 'Volume brut total' in dl.get_text():
+            dd_element = dl.find('dd').get_text().strip()
+            volume_total_trouve = True
+            break  # Arrêter la boucle une fois trouvé
+
+    if not volume_total_trouve:
+        print(product_title_text + ' Ne contient pas de volume total')
+        dd_element = 'None'
+
 
     # Dimensions
     elements_with_dimensions = soup.find_all(text=lambda text: 'Dimensions' in text)
@@ -76,7 +88,7 @@ def getInfos(url):
 
         # Ajouter le nom du produit dans la colonne "Nom"
         # Assurez-vous que le nombre de colonnes dans writer.writerow() correspond au nombre de colonnes dans le fichier CSV
-        writer.writerow([product_title_text, arborescence_text, result_text, product_price, description_text, dd_element, dimentions, '']) 
+        writer.writerow([product_title_text, arborescence_text, result_text, product_price, description_text, dd_element, dimentions]) 
 
 
 
