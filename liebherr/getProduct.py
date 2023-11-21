@@ -21,10 +21,10 @@ def getInfos(url):
     product_title_text = ' '.join(product_title.get_text().strip().split())
 
     #PDF
-    getDocuments(url, product_title_text)
+    # getDocuments(url, product_title_text)
 
     #Images
-    getImages(url, product_title_text)
+    # getImages(url, product_title_text)
 
     #Arborescence
     arborescence = soup.find('div', class_='uk-first-column')
