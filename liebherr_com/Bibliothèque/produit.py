@@ -3,6 +3,7 @@ import csv
 from pyppeteer import launch
 import os
 import requests
+import re
 
 
 parent_folder = 'images'
@@ -19,9 +20,17 @@ async def produit(url):
         soup = BeautifulSoup(content, 'html.parser')
 
         #Titre du produit
-        product_title = soup.find('h1')
-        product_title_text = ' '.join(product_title.get_text().strip().split())
+        title = soup.find('h1')
+        product_title = ' '.join(title.get_text().strip().split())
+        product_title_text = re.sub(r'[\\/*?:"<>|]', '_', product_title)
         print(product_title_text)
+
+        with open(filename, mode='r', encoding='utf-8') as file:
+            reader = csv.reader(file)
+            for row in reader:
+                if product_title_text in row:
+                    print(f"Produit '{product_title_text}' existe déjà dans le fichier CSV.")
+                    return
 
         # #Arborescence
         campaign_divs = soup.find_all('div', class_='breadcrumb')
